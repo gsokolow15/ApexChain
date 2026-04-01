@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ApexChain — The Price of Risk, Predicted</title>
+  <meta name="description"
+    content="AI-powered crypto volatility prediction. XGBoost + Random Forest + K-Means clustering. Real BUY/SELL/HOLD signals with plain-English reasoning." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="mode-expert">
+
+  <!-- ══════════════════════════════════ CANVAS BG ══ -->
+  <canvas id="particle-canvas"></canvas>
+
+  <!-- ══════════════════════════════════ NAV ══════════ -->
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <div class="nav-brand">
+        <span class="brand-icon">📈</span>
+        <span class="brand-name">ApexChain <span class="brand-hi">AI</span></span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="#dashboard">Dashboard</a></li>
+        <li><a href="#how-it-works">How It Works</a></li>
+        <li><a href="#learn">Learn</a></li>
+        <li><a href="#models">Models</a></li>
+        <li><a href="#finance">Finance</a></li>
+      </ul>
+      <div class="mode-toggle-wrap">
+        <span class="mode-label mode-b active-label" id="label-b">🎓 Beginner</span>
+        <label class="toggle-switch" title="Switch between Beginner and Expert mode">
+          <input type="checkbox" id="mode-toggle" checked />
+          <span class="toggle-slider"></span>
+        </label>
+        <span class="mode-label mode-e" id="label-e">📊 Expert</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════ HERO ═════════ -->
+  <section class="hero" id="home">
+    <div class="hero-content">
+      <div class="hero-badge-row">
+        <div class="live-badge"><span class="live-dot"></span>AI Model Ready</div>
+      </div>
+      <h1 class="hero-title">The Price of Risk —<br /><span class="hero-hi">Predicted.</span></h1>
+      <p class="hero-sub expert-text">XGBoost + Random Forest + K-Means forecasting 7-day Realised Volatility with 27
+        engineered features. Live BUY/SELL/HOLD signal powered by a 5-factor scoring model.</p>
+      <p class="hero-sub beginner-text">AI that reads the crypto market every day and tells you whether to Buy, Sell, or
+        Hold — in plain English. No finance degree required.</p>
+
+      <div class="hero-signal-preview" id="hero-signal-preview">
+        <div class="signal-badge-large hold pulsing" id="hero-badge">
+          <span id="hero-signal-text">RUN ANALYSIS</span>
+        </div>
+        <p class="hero-signal-reason" id="hero-reason">Enter a ticker below to get your live AI signal</p>
+      </div>
+
+      <div class="hero-ctas">
+        <a href="#analyzer" class="btn-primary">🚀 Run Analysis →</a>
+        <a href="#learn" class="btn-ghost beginner-link">New to crypto? Start here →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════ ANALYZER ═════ -->
+  <section class="section analyzer-section" id="analyzer">
+    <div class="container">
+      <div class="section-label">ANALYSIS ENGINE</div>
+      <h2 class="section-title">Run Live AI Analysis</h2>
+      <p class="section-sub expert-text">Fetches live market data, engineers 27 features, trains RF + XGBoost via
+        GridSearchCV, runs K-Means clustering, and returns a BUY/SELL/HOLD signal.</p>
+      <p class="section-sub beginner-text">Type in any stock or crypto ticker and click the button. The AI will analyze
+        it and give you a recommendation with plain-English reasons.</p>
+
+      <div class="analyzer-card">
+        <div class="analyzer-top">
+          <div class="input-group">
+            <label class="input-label expert-text">Ticker Symbol (yfinance format)</label>
+            <label class="input-label beginner-text">Enter an asset code — like BTC-USD for Bitcoin, AAPL for
+              Apple</label>
+            <div class="ticker-input-wrap">
+              <span class="ticker-icon">◈</span>
+              <input type="text" id="ticker-input" class="ticker-input"
+                placeholder="BTC-USD, ETH-USD, SOL-USD, AAPL, SPY…" value="BTC-USD" />
+              <div class="ticker-tooltip tooltip-wrap">
+                💡
+                <div class="tooltip-box">A ticker is the short code for any asset. BTC-USD = Bitcoin, ETH-USD =
+                  Ethereum, AAPL = Apple stock, SPY = S&P 500 ETF, SOL-USD = Solana.</div>
+              </div>
+            </div>
+          </div>
+          <div class="date-group">
+            <div class="date-field">
+              <label class="input-label">Start Date</label>
+              <input type="date" id="start-date" class="date-input" value="2020-01-01" />
+            </div>
+            <div class="date-field">
+              <label class="input-label">End Date</label>
+              <input type="date" id="end-date" class="date-input" value="2026-03-25" />
+            </div>
+          </div>
+        </div>
+        <div class="quick-tickers">
+          <span class="qt-label">Quick select:</span>
+          <button class="qt-btn" onclick="setTicker('BTC-USD')">₿ BTC</button>
+          <button class="qt-btn" onclick="setTicker('ETH-USD')">Ξ ETH</button>
+          <button class="qt-btn" onclick="setTicker('SOL-USD')">◎ SOL</button>
+          <button class="qt-btn" onclick="setTicker('DOGE-USD')">Ð DOGE</button>
+          <button class="qt-btn" onclick="setTicker('AAPL')">🍎 AAPL</button>
+          <button class="qt-btn" onclick="setTicker('SPY')">📊 SPY</button>
+        </div>
+        <!-- ── RISK TOLERANCE SLIDER ──────────────────── -->
+        <div class="risk-slider-wrap">
+          <div class="risk-slider-header">
+            <span class="risk-slider-label">🎚️ Your Risk Tolerance</span>
+            <span class="tooltip-wrap">💡
+              <div class="tooltip-box">Move this slider to tell the AI how much risk you are comfortable with.
+                Conservative = the AI only recommends BUY when it is very sure. Aggressive = the AI recommends BUY more
+                often but with more risk.</div>
+            </span>
+          </div>
+          <div class="risk-track-labels">
+            <span>🛡️ Conservative</span>
+            <span>⚖️ Moderate</span>
+            <span>🔥 Aggressive</span>
+          </div>
+          <input type="range" id="risk-slider" class="risk-range" min="1" max="10" value="5" step="1"
+            oninput="onRiskSliderChange(this.value)" />
+          <div class="risk-active-label" id="risk-active-label">⚖️ Moderate Investor (Level 5)</div>
+        </div>
+
+        <button class="run-btn" id="run-btn" onclick="runAnalysis()">
+          <span id="run-btn-text">🚀 Run Analysis</span>
+        </button>
+
+        <!-- Loading State -->
+        <div class="loading-state hidden" id="loading-state">
+          <div class="loading-spinner"></div>
+          <p class="loading-msg" id="loading-msg">Fetching market data…</p>
+          <div class="loading-steps">
+            <div class="ls-item" id="ls-1">📥 Fetching market data</div>
+            <div class="ls-item" id="ls-2">⚙️ Engineering 27 features</div>
+            <div class="ls-item" id="ls-3">🌲 Training Random Forest</div>
+            <div class="ls-item" id="ls-4">⚡ Training XGBoost</div>
+            <div class="ls-item" id="ls-5">🔵 Detecting market regime</div>
+            <div class="ls-item" id="ls-6">🎯 Generating signal</div>
+          </div>
+        </div>
+
+        <div class="error-box hidden" id="error-box">
+          <span>⚠️</span><span id="error-msg"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════ DASHBOARD ════ -->
+  <section class="section dashboard-section hidden" id="dashboard">
+    <div class="container">
+      <div class="section-label">LIVE SIGNAL DASHBOARD</div>
+      <h2 class="section-title" id="dashboard-title">Analysis Results</h2>
+
+      <!-- RISK ASSESSMENT CARD (before signal badge) -->
+      <div class="risk-card" id="risk-card">
+        <!-- Row 1: Slider -->
+        <div class="rc-row rc-slider-row">
+          <div class="rc-row-header">
+            <span class="rc-title">🎚️ Risk Tolerance Filter</span>
+            <span class="tooltip-wrap">💡<div class="tooltip-box">Move this slider to personalise the BUY/SELL/HOLD
+                signal. Conservative mode requires the AI to be more certain before recommending BUY. Aggressive mode
+                acts on smaller signals.</div></span>
+          </div>
+          <div class="risk-track-labels">
+            <span>🛡️ Conservative</span><span>⚖️ Moderate</span><span>🔥 Aggressive</span>
+          </div>
+          <input type="range" id="risk-slider-dash" class="risk-range" min="1" max="10" value="5" step="1"
+            oninput="syncRiskSliders(this.value)" />
+          <div class="risk-active-label" id="risk-active-label-dash">⚖️ Moderate Investor (Level 5)</div>
+        </div>
+
+        <!-- Row 2: Profile Badge + Description -->
+        <div class="rc-row rc-profile-row">
+          <div class="risk-profile-badge moderate" id="risk-profile-badge">⚖️ MODERATE</div>
+          <div class="risk-profile-desc">
+            <p class="expert-text" id="rp-desc-expert">Balanced risk/reward. Default signal thresholds apply. BUY on
+              score ≥ 3, SELL on score ≤ -2. Standard RSI bounds (&lt; 35 / &gt; 65).</p>
+            <p class="beginner-text" id="rp-desc-beginner">You are comfortable with some ups and downs in exchange for
+              growth. The AI uses its standard settings — a balanced approach for most investors.</p>
+          </div>
+        </div>
+
+        <!-- Row 3: RSI Risk Meter -->
+        <div class="rc-row rc-meter-row">
+          <div class="rc-row-header">
+            <span class="rc-subtitle expert-text">RSI Risk Meter</span>
+            <span class="rc-subtitle beginner-text">Is the asset overbought or oversold?</span>
+            <span class="tooltip-wrap">💡<div class="tooltip-box">RSI measures whether an asset is being bought or sold
+                too aggressively. Your risk level determines how extreme RSI needs to be before the AI acts on it.
+                Conservative investors wait for a deeper dip. Aggressive investors act sooner.</div></span>
+          </div>
+          <div class="rsi-meter">
+            <div class="rsi-zones" id="rsi-zones">
+              <div class="rsi-zone-buy" id="rsi-zone-buy"></div>
+              <div class="rsi-zone-neutral" id="rsi-zone-neutral"></div>
+              <div class="rsi-zone-sell" id="rsi-zone-sell"></div>
+            </div>
+            <div class="rsi-needle" id="rsi-needle"></div>
+            <div class="rsi-zone-labels">
+              <span class="rzl-buy">Buy Zone</span>
+              <span class="rzl-neutral">Neutral</span>
+              <span class="rzl-sell">Sell Zone</span>
+            </div>
+          </div>
+          <div class="rsi-status" id="rsi-status">Run an analysis to see your RSI position</div>
+        </div>
+
+        <!-- Row 4: Risk-Adjusted Signal -->
+        <div class="rc-row rc-signal-row">
+          <div class="rc-row-header">
+            <span class="rc-subtitle">Risk-Adjusted Signal</span>
+            <span class="tooltip-wrap">💡<div class="tooltip-box">This is your personalised signal. The same market data
+                produces different recommendations depending on your risk level — a conservative investor and an
+                aggressive investor looking at the same chart should make different decisions.</div></span>
+          </div>
+          <div class="ra-signal-wrap">
+            <div class="ra-signal-badge hold" id="ra-signal-badge"><span id="ra-signal-text">—</span></div>
+            <div class="ra-signal-detail">
+              <div class="ra-signal-line1" id="ra-signal-line1">Run analysis to see your personalised signal</div>
+              <div class="ra-signal-line2" id="ra-signal-line2"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Risk Warning Banner -->
+        <div class="risk-warning" id="risk-warning">
+          <span>⚠️ <strong>Risk Disclosure:</strong> ApexChain is an educational and research tool. The risk
+            assessment slider adjusts signal sensitivity but does not eliminate investment risk. Cryptocurrency markets
+            are highly volatile. Never invest more than you can afford to lose. Consult a licensed financial advisor
+            before making any investment decisions.</span>
+          <button class="rw-dismiss"
+            onclick="document.getElementById('risk-warning').classList.add('hidden')">✕</button>
+        </div>
+      </div>
+
+      <!-- ROW 1: Signal Badge -->
+      <div class="signal-row">
+        <div class="signal-center">
+          <div class="signal-badge-xl pulsing" id="main-signal-badge">
+            <span id="main-signal-text">—</span>
+          </div>
+          <div class="signal-score-row">
+            <span class="signal-score-label">Signal Score:</span>
+            <span class="signal-score-val" id="signal-score-val">— / 7</span>
+          </div>
+          <div class="confidence-bar-wrap">
+            <div class="confidence-label">Model Confidence: <span id="confidence-pct">—</span></div>
+            <div class="confidence-track">
+              <div class="confidence-fill" id="confidence-fill" style="width:0%"></div>
+            </div>
+          </div>
+          <p class="signal-reason" id="signal-reason-main">—</p>
+        </div>
+      </div>
+
+      <!-- ROW 2: Metric Cards -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="mc-top">
+            <span class="mc-label expert-text">Forecasted 7-Day RV</span>
+            <span class="mc-label beginner-text">Expected Storminess</span>
+            <span class="tooltip-wrap mc-tip">💡<div class="tooltip-box"><strong>Expert:</strong> Annualised 7-day
+                realised volatility forecast from champion model.<br /><strong>Beginner:</strong> How wildly the AI
+                expects the price to move next week. Think of it like a weather forecast — higher % = stormier market.
+              </div></span>
+          </div>
+          <div class="mc-val" id="mc-forecasted-rv">—</div>
+          <div class="mc-delta" id="mc-rv-delta"></div>
+        </div>
+        <div class="metric-card">
+          <div class="mc-top">
+            <span class="mc-label expert-text">Current RV-7d</span>
+            <span class="mc-label beginner-text">This Week's Storminess</span>
+            <span class="tooltip-wrap mc-tip">💡<div class="tooltip-box"><strong>Expert:</strong> 7-day rolling σ of log
+                returns × √252.<br /><strong>Beginner:</strong> How much the price actually moved this past week —
+                measured from real data, not a guess.</div></span>
+          </div>
+          <div class="mc-val" id="mc-current-rv">—</div>
+        </div>
+        <div class="metric-card">
+          <div class="mc-top">
+            <span class="mc-label">RSI-14</span>
+            <span class="tooltip-wrap mc-tip">💡<div class="tooltip-box"><strong>Expert:</strong> Relative Strength
+                Index — momentum oscillator 0–100.<br /><strong>Beginner:</strong> A score from 0–100 measuring market
+                excitement. Below 35 = asset may be unfairly cheap. Above 65 = may be overpriced. Like a thermometer for
+                investor emotions.</div></span>
+          </div>
+          <div class="mc-val" id="mc-rsi">—</div>
+          <div class="mc-tag" id="mc-rsi-tag"></div>
+        </div>
+        <div class="metric-card">
+          <div class="mc-top">
+            <span class="mc-label">VIX Level</span>
+            <span class="tooltip-wrap mc-tip">💡<div class="tooltip-box"><strong>Expert:</strong> CBOE Volatility Index
+                — 30-day implied vol of S&P 500.<br /><strong>Beginner:</strong> The stock market's fear gauge. Below 20
+                = calm. Above 30 = investors are scared. Above 40 = panic mode. Crypto often reacts to VIX spikes.</div>
+            </span>
+          </div>
+          <div class="mc-val" id="mc-vix">—</div>
+          <div class="mc-tag" id="mc-vix-tag"></div>
+        </div>
+        <div class="metric-card">
+          <div class="mc-top">
+            <span class="mc-label expert-text">Market Regime</span>
+            <span class="mc-label beginner-text">Market Mood</span>
+            <span class="tooltip-wrap mc-tip">💡<div class="tooltip-box"><strong>Expert:</strong> K-Means cluster label
+                mapped by avg RV: low RV = Bull, mid = Sideways, high = Bear.<br /><strong>Beginner:</strong> The
+                overall mood of the market right now. Bull = prices rising, Bear = prices falling, Sideways = prices
+                going nowhere.</div></span>
+          </div>
+          <div class="mc-val" id="mc-regime">—</div>
+        </div>
+      </div>
+
+      <!-- ROW 3: Reasoning Panel -->
+      <div class="reasoning-panel">
+        <div class="rp-header">
+          <h3 class="expert-text">Signal Reasoning — Factor Breakdown</h3>
+          <h3 class="beginner-text">Why the AI gave this signal</h3>
+        </div>
+        <div class="reasoning-list" id="reasoning-list"></div>
+      </div>
+
+      <!-- ROW 4: Charts Top -->
+      <div class="charts-row">
+        <div class="chart-panel">
+          <div class="cp-header">
+            <h3 class="expert-text">Actual vs Predicted Volatility</h3>
+            <h3 class="beginner-text">Did the AI Get It Right?</h3>
+            <span class="tooltip-wrap cp-tip">💡<div class="tooltip-box"><strong>Expert:</strong> Champion model
+                predictions vs realised RV on 20% held-out test set.<br /><strong>Beginner:</strong> Blue line = what
+                actually happened. Green dashed = what the AI predicted. The closer they track, the better the model.
+              </div></span>
+          </div>
+          <canvas id="av-chart" height="260"></canvas>
+          <p class="chart-caption beginner-text">Green dashed = AI's prediction. Blue = what actually happened. The
+            closer they track, the smarter the model.</p>
+          <p class="chart-caption expert-text">Champion model RV forecast vs realised RV on chronological 20% holdout.
+          </p>
+        </div>
+        <div class="chart-panel">
+          <div class="cp-header">
+            <h3 class="expert-text">Feature Importance — Signal Drivers</h3>
+            <h3 class="beginner-text">What the AI Uses to Decide</h3>
+            <span class="tooltip-wrap cp-tip">💡<div class="tooltip-box"><strong>Expert:</strong> Gain-based feature
+                importance from champion model.<br /><strong>Beginner:</strong> Longer bar = bigger influence on the
+                Buy/Sell/Hold decision. This shows which signals the AI trusts most.</div></span>
+          </div>
+          <canvas id="fi-chart" height="260"></canvas>
+          <p class="chart-caption beginner-text">Longer bar = that signal matters more to the AI's decision.</p>
+          <p class="chart-caption expert-text">Gain-based importance from champion model across 27 engineered features.
+          </p>
+        </div>
+      </div>
+
+      <!-- ROW 5: Charts Bottom -->
+      <div class="charts-row">
+        <div class="chart-panel">
+          <div class="cp-header">
+            <h3 class="expert-text">Market Regime Map (PCA 2D)</h3>
+            <h3 class="beginner-text">Market Mood Map</h3>
+            <span class="tooltip-wrap cp-tip">💡<div class="tooltip-box"><strong>Expert:</strong> 27-feature space
+                projected to 2 PCA components, colored by K-Means cluster label.<br /><strong>Beginner:</strong> Each
+                dot = one market day. The ⭐ is today's position. The AI grouped all days automatically — no human rules.
+              </div></span>
+          </div>
+          <canvas id="pca-chart" height="260"></canvas>
+          <p class="chart-caption beginner-text">Each dot = one market day. ⭐ = today. Colors = Bull (green) / Sideways
+            (yellow) / Bear (red).</p>
+          <p class="chart-caption expert-text">27-dimensional feature space compressed to 2 PCA components. K-Means
+            regime labels overlaid.</p>
+        </div>
+        <div class="chart-panel">
+          <div class="cp-header">
+            <h3>Price History with Regime Coloring</h3>
+            <span class="tooltip-wrap cp-tip">💡<div class="tooltip-box">Each color segment shows the market regime at
+                that time: green = Bull, yellow = Sideways, red = Bear. Detected automatically by K-Means AI.</div>
+            </span>
+          </div>
+          <canvas id="price-chart" height="260"></canvas>
+          <p class="chart-caption beginner-text">Each color = the market mood the AI detected at that time. Green = good
+            times, red = tough times.</p>
+          <p class="chart-caption expert-text">Close price segmented by K-Means regime label. Demonstrates regime
+            persistence and transitions.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════ HOW IT WORKS ══ -->
+  <section class="section how-section" id="how-it-works">
+    <div class="container">
+      <div class="section-label">HOW IT WORKS</div>
+      <h2 class="section-title">Three Steps to a Signal</h2>
+      <div class="steps-row">
+        <div class="step-card">
+          <div class="step-num">01</div>
+          <div class="step-icon">📥</div>
+          <h3>Multi-Signal Ingestion</h3>
+          <p class="expert-text">Pulls ticker, ETH-USD, SPY, ^VIX via yfinance. Engineers 27 features: RSI-14, MACD,
+            Bollinger Bands, RV lags, macro indicators, Fear & Greed proxy.</p>
+          <p class="beginner-text">The AI reads price data, fear levels, and market momentum — like an analyst reading
+            dozens of reports each morning before making a call.</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-card">
+          <div class="step-num">02</div>
+          <div class="step-icon">🤖</div>
+          <h3>RF vs XGBoost Duel</h3>
+          <p class="expert-text">GridSearchCV tunes both models on TimeSeriesSplit(n=5). Champion selected by MAE on 20%
+            held-out test set. No data leakage.</p>
+          <p class="beginner-text">Two AI models compete to make the most accurate forecast. Only the winner gets used
+            for your signal — like a playoff where accuracy wins.</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-card">
+          <div class="step-num">03</div>
+          <div class="step-icon">🎯</div>
+          <h3>Signal Generation</h3>
+          <p class="expert-text">5-factor scoring model across σ̂ trend, RSI, MACD, VIX, and K-Means regime. Score ≥ 3 =
+            BUY, ≤ -2 = SELL, else HOLD.</p>
+          <p class="beginner-text">The AI adds up all the positive and negative signals it found and gives you one clear
+            answer: Buy, Sell, or Hold — with a plain-English reason why.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════ LEARN ════════ -->
+  <section class="section learn-section" id="learn">
+    <div class="container">
+      <div class="section-label">CRYPTO 101</div>
+      <h2 class="section-title">Never heard of volatility?<br />You're in the right place.</h2>
+      <p class="section-sub">Everything ApexChain measures, explained without the jargon.</p>
+      <div class="faq-list" id="faq-list">
+        <!-- JS renders accordions -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════ MODELS ═══════ -->
+  <section class="section models-section" id="models">
+    <div class="container">
+      <div class="section-label">MODEL PERFORMANCE</div>
+      <h2 class="section-title">The RF vs. XGBoost Duel</h2>
+      <p class="section-sub expert-text">Champion model selected by MAE on 20% chronological holdout. TimeSeriesSplit
+        prevents leakage.</p>
+      <p class="section-sub beginner-text">Lower number = more accurate AI. The winning model is the one giving you the
+        live signal above. Both models always run so we use the best one for your ticker.</p>
+
+      <div class="models-table-wrap hidden" id="models-table-wrap">
+        <table class="models-table" id="models-table">
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>MAE <span class="expert-text">(annualised)</span></th>
+              <th>RMSE <span class="expert-text">(annualised)</span></th>
+              <th>Best Params</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="models-tbody">
+            <tr>
+              <td colspan="5" style="text-align:center;color:var(--muted);padding:40px">Run an analysis to see live
+                model results</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="models-placeholder" id="models-placeholder">
+        <div class="placeholder-card">
+          <div class="ph-icon">🤖</div>
+          <p class="expert-text">Model metrics will appear here after you run an analysis above.</p>
+          <p class="beginner-text">Once you run an analysis, you'll see exactly how accurate each AI was.</p>
+          <a href="#analyzer" class="btn-primary" style="margin-top:16px;display:inline-block">Run Analysis →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════ FINANCE ══════ -->
+  <section class="section finance-section" id="finance">
+    <div class="container">
+      <div class="section-label">REAL-WORLD APPLICATIONS</div>
+      <h2 class="section-title">How This Powers Real Trading Decisions</h2>
+      <div class="finance-grid">
+        <div class="finance-card">
+          <div class="fc-icon">⚙️</div>
+          <h3>Options Pricing</h3>
+          <p class="expert-text">Forecasted σ̂ inputs directly into Black-Scholes / Heston model to price near-dated
+            BTC/ETH options more accurately than static IV surfaces.</p>
+          <p class="beginner-text">Helps traders fairly price contracts that let them bet on future price moves without
+            actually owning the asset.</p>
+          <div class="fc-formula expert-text">C = S·N(d₁) − K·e<sup>−rT</sup>·N(d₂)</div>
+          <div class="fc-formula beginner-text">σ̂ → Fairer option prices → Better bets</div>
+        </div>
+        <div class="finance-card">
+          <div class="fc-icon">🛡️</div>
+          <h3>Delta Hedging</h3>
+          <p class="expert-text">Rising σ̂ triggers aggressive Δ rebalancing before drawdowns materialise, reducing P&L
+            bleed.</p>
+          <p class="beginner-text">When risk rises, smart traders adjust their positions to protect profits — like
+            tightening your seatbelt before a bumpy road.</p>
+          <div class="fc-formula expert-text">ΔRebalance ∝ σ̂<sub>t+1</sub></div>
+        </div>
+        <div class="finance-card">
+          <div class="fc-icon">📉</div>
+          <h3>VaR &amp; Margin</h3>
+          <p class="expert-text">99% 1-day VaR = 2.33 × σ̂_daily × Position. Dynamic and forward-looking vs static
+            historical vol.</p>
+          <p class="beginner-text">Estimates the most you could lose in one day with 99% certainty — so you always know
+            your worst case before it happens.</p>
+          <div class="fc-formula expert-text">VaR₉₉ = 2.33 · σ̂ · P</div>
+        </div>
+        <div class="finance-card">
+          <div class="fc-icon">🔀</div>
+          <h3>Regime Filters</h3>
+          <p class="expert-text">If VIX leads importance → macro hedges (long VIX calls, short SPY). If MACD/RSI lead →
+            crypto momentum overlays.</p>
+          <p class="beginner-text">The AI identifies whether fear or momentum is driving the market and adjusts its
+            strategy recommendations to match.</p>
+          <div class="fc-formula expert-text">VIX → macro hedge | RSI → momentum overlay</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════ TECH STACK ═══ -->
+  <section class="section tech-section">
+    <div class="container tech-center">
+      <div class="section-label">TECH STACK</div>
+      <div class="tech-pills">
+        <span class="tech-pill">Python</span><span class="tech-pill">XGBoost</span>
+        <span class="tech-pill">Random Forest</span><span class="tech-pill">K-Means</span>
+        <span class="tech-pill">PCA</span><span class="tech-pill">yfinance</span>
+        <span class="tech-pill">scikit-learn</span><span class="tech-pill">Pandas</span>
+        <span class="tech-pill">NumPy</span><span class="tech-pill">GridSearchCV</span>
+        <span class="tech-pill">TimeSeriesSplit</span><span class="tech-pill">StandardScaler</span>
+        <span class="tech-pill">Flask</span><span class="tech-pill">Chart.js</span>
+        <span class="tech-pill">Black-Scholes</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════ DOCS ══════════ -->
+  <section class="section docs-section" id="docs">
+    <div class="container">
+      <div class="section-label">DOCUMENTATION</div>
+      <h2 class="section-title">📄 Project Documentation</h2>
+      <p class="section-sub">Full technical and conceptual walkthrough of the ApexChain pipeline.</p>
+      <button class="docs-toggle" onclick="toggleDocs()" id="docs-toggle-btn">
+        ▼ Expand Full Documentation
+      </button>
+      <div class="docs-body hidden" id="docs-body">
+        <div class="docs-section-block">
+          <h3>1. Problem Statement</h3>
+          <p>Crypto markets exhibit extreme non-linear volatility clustering that classical time-series models (ARIMA,
+            GARCH) struggle to capture due to structural breaks and high-dimensional macro interactions. ApexChain
+            addresses this by framing volatility prediction as a supervised regression task on rich feature sets,
+            combined with unsupervised regime detection, to produce actionable BUY/SELL/HOLD signals anchored in
+            derivatives finance.</p>
+        </div>
+        <div class="docs-section-block">
+          <h3>2. Data Sources & Feature Engineering (27 Features)</h3>
+          <p><strong>Data:</strong> yfinance — user-specified ticker + ETH-USD + ^VIX + SPY. 80/20 chronological split.
+          </p>
+          <ul class="docs-feature-list">
+            <li><strong>Log Returns:</strong> LogRet, ETH_LogRet, SPY_LogRet, LogRet_lag1/2/3</li>
+            <li><strong>Target — RV7:</strong> 7-day rolling σ of log returns × √252 (annualised realised volatility)
+            </li>
+            <li><strong>RV Lags:</strong> RV7_lag1, lag2, lag3, lag5, lag7 (autoregressive features)</li>
+            <li><strong>RSI-14:</strong> Relative Strength Index, 14-day period</li>
+            <li><strong>Bollinger Bands:</strong> BB_Width (4σ/SMA), BB_PctB (%B position)</li>
+            <li><strong>MACD:</strong> MACD_Line (EMA12−EMA26), MACD_Signal (EMA9), MACD_Hist</li>
+            <li><strong>Moving Averages:</strong> SMA_20, EMA_12, Price_vs_SMA20</li>
+            <li><strong>VIX:</strong> VIX level, VIX_lag1, VIX_lag3</li>
+            <li><strong>Macro:</strong> SPY_Mom5 (5-day SPY momentum), ETH_Corr5 (5-day ETH-ticker rolling correlation)
+            </li>
+            <li><strong>Behavioral:</strong> FearGreed — VIX-inverse proxy with noise (API-ready placeholder)</li>
+            <li><strong>Volume:</strong> Raw trading volume</li>
+          </ul>
+        </div>
+        <div class="docs-section-block">
+          <h3>3. Model Architecture</h3>
+          <p><strong>Supervised (Regression target = RV7):</strong></p>
+          <ul>
+            <li>Random Forest Regressor — GridSearchCV over n_estimators=[200,400], max_depth=[5,8],
+              min_samples_leaf=[3,5]</li>
+            <li>XGBoost Regressor — GridSearchCV over n_estimators=[200,300], max_depth=[3,5], learning_rate=[0.05,0.1],
+              subsample=[0.8,1.0]</li>
+            <li>CV: TimeSeriesSplit(n_splits=5) — strictly no future data in folds</li>
+            <li>Preprocessing: StandardScaler fit only on train set</li>
+          </ul>
+          <p style="margin-top:12px"><strong>Unsupervised:</strong></p>
+          <ul>
+            <li>K-Means(n_clusters=3) — regime detection; clusters mapped by avg RV → Bull / Sideways / Bear</li>
+            <li>PCA(n_components=2) — 27-dim → 2D for regime scatter visualization</li>
+          </ul>
+        </div>
+        <div class="docs-section-block">
+          <h3>4. Evaluation Methodology</h3>
+          <p>Both models evaluated on a strictly held-out 20% chronological test set. Metrics: MAE and RMSE on
+            annualised RV (× 100 for % display). Champion = lower MAE on test set. TimeSeriesSplit used in GridSearchCV
+            to replicate walk-forward validation and prevent temporal leakage.</p>
+        </div>
+        <div class="docs-section-block">
+          <h3>5. Signal Scoring System</h3>
+          <p>5-factor linear scoring model: σ̂ trend (±2), RSI (±2), MACD Histogram (±1), VIX level (±1), K-Means regime
+            (±1). Max absolute score = 7. Signal: score ≥ 3 → BUY, ≤ −2 → SELL, else → HOLD. Confidence = min(100, 50 +
+            |score| × 10)%.</p>
+        </div>
+        <div class="docs-section-block">
+          <h3>6. Finance Connection & Real-World Applications</h3>
+          <p>The 7-day RV forecast (σ̂) feeds directly into: (1) Black-Scholes / Heston options pricing as the σ input;
+            (2) Dynamic delta-hedging — a rising σ̂ triggers more aggressive Δ rebalancing; (3) VaR computation — 99%
+            1-day VaR = 2.33 × σ̂/√252 × Position; (4) Regime-based overlay strategies — VIX-led regimes favor macro
+            hedges, RSI/MACD-led regimes favor momentum overlays.</p>
+        </div>
+        <div class="docs-section-block">
+          <h3>7. Limitations & Future Work</h3>
+          <ul>
+            <li>Fear & Greed Score is currently a VIX-inverse proxy; production version should call the Alternative.me
+              API</li>
+            <li>Model retraining is per-request; production would use scheduled retraining with model registry</li>
+            <li>Signal scoring weights are heuristic; future work: calibrate via backtesting on historical signals</li>
+            <li>No on-chain data (exchange flows, whale wallets) — strong alpha source for crypto specifically</li>
+            <li>LSTM or Temporal Fusion Transformer could capture longer temporal dependencies</li>
+          </ul>
+          <p style="margin-top:16px;color:var(--danger);font-weight:600">⚠️ Disclaimer: ApexChain is a research and
+            educational tool. It is not financial advice. Past model performance does not guarantee future results.
+            &mdash; Always consult a licensed financial advisor before making investment decisions.</p>
+        </div>
+        <div class="docs-section-block">
+          <h3>8. Risk Assessment Methodology</h3>
+          <p>The risk tolerance slider modifies signal generation thresholds in two ways: (1) it adjusts the RSI
+            buy/sell trigger points — conservative investors require a deeper oversold condition (RSI &lt; 25–30) before
+            a BUY fires, while aggressive investors act on shallower dips (RSI &lt; 45–55); (2) it raises or lowers the
+            composite signal score threshold required to generate a BUY recommendation. This reflects the real-world
+            practice of risk-adjusted position sizing and entry criteria, where investor risk appetite directly governs
+            trade execution rules. RSI serves its dual role here as both an ML feature (input to XGBoost/Random Forest)
+            and a direct risk signal (threshold-based rule in the scoring engine).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════ FOOTER ═══════ -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span>📈 ApexChain</span>
+        <span class="footer-by">Built by <strong>Gavin Sokolow</strong>, University of Florida</span>
+      </div>
+      <div class="footer-links">
+        <a href="#how-it-works">How It Works</a>
+        <a href="#learn">Learn</a>
+        <a href="#docs">Documentation</a>
+        <a href="#finance">Finance</a>
+      </div>
+      <div class="footer-disclaimer">
+        For research and educational purposes only. Not financial advice.<br />
+        Always consult a licensed financial advisor before making investment decisions.
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
