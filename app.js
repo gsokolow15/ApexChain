@@ -4,7 +4,7 @@
    FAQ accordion · Loading states · Animated counters
 ═══════════════════════════════════════════════════════ */
 
-const API_BASE = "http://127.0.0.1:5050";
+const API_BASE = "https://apexchain-1.onrender.com";
 let avChart = null, fiChart = null, pcaChart = null, priceChart = null;
 
 /* ── Particle Canvas Background ─────────────────────── */
@@ -535,7 +535,7 @@ async function runAnalysis() {
 
   } catch (err) {
     stopLoading();
-    showError("Cannot reach the analysis server. Make sure server.py is running on port 5050.\n\nRun: conda run python server.py");
+    showError("Cannot reach the analysis server. The backend may be waking up — please wait 30 seconds and try again (Render free tier spins down when idle).");
   }
 }
 
