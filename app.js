@@ -4,7 +4,14 @@
    FAQ accordion · Loading states · Animated counters
 ═══════════════════════════════════════════════════════ */
 
-const API_BASE = "https://apexchain-1.onrender.com";
+const API_BASE = "http://localhost:5050";
+
+/* ── Set end-date to today on load ──────────────────── */
+(function setDefaultEndDate() {
+  const today = new Date().toISOString().split("T")[0];
+  const endEl = document.getElementById("end-date");
+  if (endEl && !endEl.value) endEl.value = today;
+})();
 let avChart = null, fiChart = null, pcaChart = null, priceChart = null;
 
 /* ── Particle Canvas Background ─────────────────────── */
