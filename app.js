@@ -542,7 +542,7 @@ async function runAnalysis() {
 
   } catch (err) {
     stopLoading();
-    showError("Cannot reach the analysis server. The backend may be waking up — please wait 30 seconds and try again (Render free tier spins down when idle).");
+    showError("Cannot reach the analysis server. Make sure the local backend is running: open a terminal and run 'python server.py' from the website folder, then try again.");
   }
 }
 
