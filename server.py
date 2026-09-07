@@ -399,7 +399,7 @@ def analyze():
         body   = request.get_json()
         ticker = body.get("ticker", "BTC-USD").strip().upper()
         start  = body.get("start", "2020-01-01")
-        end    = body.get("end",   "2026-03-25")
+        end    = body.get("end",   pd.Timestamp.today().strftime("%Y-%m-%d"))
 
         # 1. Feature engineering
         df, close_series = build_features(ticker, start, end)
@@ -407,7 +407,7 @@ def analyze():
         if len(df) < 55:
             return jsonify({"error": (
                 f"Not enough data for '{ticker}' ({len(df)} usable rows). "
-                "Try a wider date range — recommended: 2020-01-01 to 2026-03-25. "
+                "Try a wider date range — recommended: 2023-01-01 to today. "
                 "Note: newer tickers like SOL-USD and DOGE-USD only have data from mid-2020 onward."
             )}), 400
 
