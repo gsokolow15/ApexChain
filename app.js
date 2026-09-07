@@ -4,7 +4,7 @@
    FAQ accordion · Loading states · Animated counters
 ═══════════════════════════════════════════════════════ */
 
-const API_BASE = "http://localhost:5050";
+const API_BASE = "https://issue-discount-spender.ngrok-free.dev";
 
 /* ── Set end-date to today on load ──────────────────── */
 (function setDefaultEndDate() {
